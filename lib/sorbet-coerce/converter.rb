@@ -181,8 +181,9 @@ class TypeCoerce::Converter
     end
 
     props = type.props
+    key_lookup = props.map { |prop_name, prop_config| [prop_config.fetch(:name, prop_name).to_sym, prop_name] }.to_h
     args.map { |name, value|
-      key = name.to_sym
+      key = key_lookup.fetch(name.to_sym, name.to_sym)
       [
         key,
         (!props.include?(key) || value.nil?) ?

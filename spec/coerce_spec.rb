@@ -43,6 +43,10 @@ describe TypeCoerce do
       end
     end
 
+    class WithName < T::Struct
+      const :my_value, Integer, name: 'myValue'
+    end
+
     class WithEnum < T::Struct
       const :myenum, TestEnum
     end
@@ -337,6 +341,15 @@ describe TypeCoerce do
       expect {
         TypeCoerce[WithEnum].new.from({myenum: "bad_key"})
       }.to raise_error(TypeCoerce::CoercionError)
+    end
+  end
+
+  context 'when dealing with name' do
+    it 'coerces correctly' do
+      expect(TypeCoerce[WithName].new.from({myValue: 1}).my_value).to eq 1
+      expect(TypeCoerce[WithName].new.from({"myValue" => 1}).my_value).to eq 1
+      expect(TypeCoerce[WithName].new.from({my_value: 1}).my_value).to eq 1
+      expect(TypeCoerce[WithName].new.from({"my_value" => 1}).my_value).to eq 1
     end
   end
 
